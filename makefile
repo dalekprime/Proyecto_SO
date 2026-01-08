@@ -4,7 +4,7 @@ CFLAGS = -Wall -pthread
 #-pthread Necesario para los hiloss
 
 #Lista los .c e indica que necesita sus .o
-SRCS = $(wildcard *.c)
+SRCS = $(wildcard src/*.c)
 OBJS = $(SRCS:.c=.o)
 
 vm: $(OBJS)
