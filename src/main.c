@@ -1,4 +1,4 @@
-#include "machine.h"
+#include "system.h"
 
 int main(){
     printf("hello\n");

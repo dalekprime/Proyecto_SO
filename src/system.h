@@ -1,0 +1,108 @@
+#ifndef SYSTEM_H
+#define SYSTEM_H
+
+#include <stdio.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <math.h>
+
+//Constante del Hardware
+#define MEM_SIZE 2000
+#define OS_MEM_RESERVED 300
+#define WORD_SIZE 8
+#define MAGNITUDE_LIMIT 9999999
+
+//Codigo de Interrumpcion
+#define INT_NONE -1 //Default
+#define INT_SYSCALL_INVALID 0 //Llamada a Sistema Invalida
+#define INT_INVALID_INT 1 //Interrumpio Invalida
+#define INT_SYSCALL 2 //LLamada a Sistema
+#define INT_TIMER 3 //Reloj
+#define INT_IO_END 4 //Finalizacion de I/O
+#define INT_INVALID_INSTR 5 //Instruccion Invalida
+#define INT_INVALID_ADDR 6 //Direccion Invalida
+#define INT_UNDERFLOW 7 //Underflow
+#define INT_OVERFLOW 8 //Overflow
+
+//Palabra de Estado
+typedef struct{
+    //0 Cero Flag, 1 Signned Flag, 2 Unsignned Flag, 3 Overflow Flag
+    int condition_code; 
+    //0 Usuario, 1 Kernel
+    bool operation_mode; 
+    //0 Disable, 1 Enable
+    bool interruptions_enabled; 
+    //Dirrecion de la Proxima Instruccion
+    int pc; 
+}PSW_t;
+
+//Registros del Sistema
+typedef struct{
+    int AC; //Acumulador para Operaciones Generales
+    int MAR; //Direccion de Memoria a Buscar
+    int MDR; //Contenido del MAR
+    int IR; //Instruccion Actual
+    int RB; //Registro Base del Proceso actual
+    int RL; //Registro Limite del Proceso Actual
+    int RX; //Base de la Pila
+    int SP; //Tope de la Pila
+    PSW_t PSW; //Estado Del sistema
+}CPU_REGISTERS;
+
+//Estado del DMA
+typedef struct {
+    // Registros accesibles por instrucciones 
+    int selected_cylinder; 
+    int selected_track;    
+    int selected_sector;   
+    int ram_address;       
+    int io_direction;      
+    int status;            
+    // Control interno 
+    bool active;
+    pthread_cond_t cond;
+    pthread_mutex_t mutex;
+} DMA_CONTROLLER;
+
+//Estado de Sistema
+typedef struct{
+    int ram[MEM_SIZE];
+    CPU_REGISTERS cpu_registers;
+    DMA_CONTROLLER dma_controller;
+    //Para Control del BUS
+    pthread_mutex_t bus_mutex;
+    //Para Control del Logger
+    pthread_mutex_t log_mutex;
+    //Reloj
+    int time;
+    //Modo del Sistema
+    int debug_mode_enabled; //0 Disable, 1 Enable
+    //Interrumpion
+    int pending_interrupt;
+}SYSTEM_STATE;
+//Instancia del Sistema
+extern SYSTEM_STATE sys;
+//Funciones de Proposito General
+int sign_to_int(int sm_val, int size){
+    int sign  = sm_val / pow(10, size);
+    int val = sm_val % (int)pow(10, size);
+    if(sign == 1){
+        return val*-1;
+    }
+    return val;
+};
+int int_to_sign(int int_val, int size){
+    int sign = 0;
+    if(int_val < 0){
+        sign = 1;
+        int_val *= -1;
+    }
+    if(int_val > MAGNITUDE_LIMIT){
+        //Interrumpcio por Overflow (POR HACER)
+        int_val = MAGNITUDE_LIMIT;
+    };
+    return (sign * pow(10, size)) + int_val;
+};
+#endif
+
