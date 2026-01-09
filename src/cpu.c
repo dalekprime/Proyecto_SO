@@ -12,14 +12,20 @@ int get_operand(int mode, int value){
     switch (mode){
         case 0:
             //Valor en Direccion
+            if(sys.cpu_registers.PSW.operation_mode == 0){
+                value += sys.cpu_registers.RB;
+            };
             return sign_to_int(memory_read(value), 8);
         case 1:
             //Valor Inmediato
             return sign_to_int(value, 5);
         case 2:
             //Valor en Memoria con desplazamiento
-            int base = sign_to_int(sys.cpu_registers.AC, 8);
-            return sign_to_int(memory_read(base + value), 8);
+            int base = sign_to_int(sys.cpu_registers.AC, 8) + value;
+            if(sys.cpu_registers.PSW.operation_mode == 0){
+                value += sys.cpu_registers.RB;
+            };
+            return sign_to_int(memory_read(base), 8);
         default:
             //Codigo invalido
             sys.pending_interrupt = INT_INVALID_INSTR;
@@ -32,6 +38,9 @@ int get_addr(int mode, int value){
     switch (mode){
         case 0:
             //Valor en Direccion
+            if(sys.cpu_registers.PSW.operation_mode == 0){
+                value += sys.cpu_registers.RB;
+            };
             return value;
         case 1:
             //No puede contener ese mode
@@ -39,7 +48,11 @@ int get_addr(int mode, int value){
             return -1;
         case 2:
             //Valor en Memoria con desplazamiento
-            return sign_to_int(sys.cpu_registers.AC, 8) + value;
+            int eff_addr = sign_to_int(sys.cpu_registers.AC, 8) + value;
+            if(sys.cpu_registers.PSW.operation_mode == 0){
+                eff_addr += sys.cpu_registers.RB;
+            };
+            return eff_addr;
         default:
             //Codigo invalido
             sys.pending_interrupt = INT_INVALID_INSTR;
@@ -76,15 +89,6 @@ int mainloop(){
         //Decode Phase
         int opcode, addr_mode, operand;
         decode(sys.cpu_registers.IR, &opcode, &addr_mode, &operand);
-        //Debug
-        if (sys.debug_mode_enabled == 1) {
-            printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n", 
-                   sys.cpu_registers.MAR, 
-                   sys.cpu_registers.IR, 
-                   sys.cpu_registers.AC);
-            printf("Presione Enter para continuar...");
-            getchar();
-        }
         //Execute Phase
         int val_ac, val_op, res, eff_addr;
         switch (opcode){
@@ -274,6 +278,15 @@ int mainloop(){
             default:
                 sys.pending_interrupt = INT_INVALID_INSTR;
             break;
+        }
+        //Debug
+        if (sys.debug_mode_enabled == 1) {
+            printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n", 
+                   sys.cpu_registers.MAR, 
+                   sys.cpu_registers.IR, 
+                   sys.cpu_registers.AC);
+            printf("Presione Enter para continuar...");
+            getchar();
         }
         sys.time += 1;
         internal_timer += 1;
