@@ -16,7 +16,7 @@ void init(){
     sys.cpu_registers.PSW.condition_code = 0;
     sys.cpu_registers.PSW.operation_mode = 0;
     sys.cpu_registers.PSW.interruptions_enabled = 1;
-    sys.cpu_registers.PSW.pc = 300;
+    sys.cpu_registers.PSW.pc = 0;
     //Inciar Parametros    
     sys.debug_mode_enabled = 1;
     sys.time = 0;

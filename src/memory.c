@@ -6,11 +6,9 @@ int memory_read(int addr){
     pthread_mutex_lock(&sys.bus_mutex);
     //Verificar Validez de la Direccion
     if(sys.cpu_registers.PSW.operation_mode == 0){
-        int eff_addr = sys.cpu_registers.RB + addr;
-        printf("%d, %d", addr, eff_addr);
+        int eff_addr = addr;
         if(eff_addr < sys.cpu_registers.RB || eff_addr > sys.cpu_registers.RL){
             sys.pending_interrupt = INT_INVALID_ADDR;
-            printf("fallo 1");
             pthread_mutex_unlock(&sys.bus_mutex);
             return -1;
         };
@@ -34,7 +32,7 @@ void memory_write(int addr, int data){
     pthread_mutex_lock(&sys.bus_mutex);
     //Verificar Validez de la Direccion
     if(sys.cpu_registers.PSW.operation_mode == 0){
-        int eff_addr = sys.cpu_registers.RB + addr;
+        int eff_addr = addr;
         if(eff_addr < sys.cpu_registers.RB || eff_addr > sys.cpu_registers.RL){
             sys.pending_interrupt = INT_INVALID_ADDR;
             pthread_mutex_unlock(&sys.bus_mutex);

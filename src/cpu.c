@@ -69,7 +69,7 @@ int mainloop(){
             internal_timer = 0;
         };
         //Fetch Phase
-        sys.cpu_registers.MAR = sys.cpu_registers.PSW.pc;
+        sys.cpu_registers.MAR = sys.cpu_registers.RB + sys.cpu_registers.PSW.pc;
         sys.cpu_registers.MDR = memory_read(sys.cpu_registers.MAR);
         sys.cpu_registers.IR = sys.cpu_registers.MDR;
         sys.cpu_registers.PSW.pc++;
@@ -138,7 +138,7 @@ int mainloop(){
             case 8:
                 val_ac = sign_to_int(sys.cpu_registers.AC, 8);
                 val_op = get_operand(addr_mode, operand);
-                ALU(val_ac, val_op, DIVI);
+                ALU(val_ac, val_op, RES);
             break;
             //jmpe
             case 9:
