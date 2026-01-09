@@ -6,12 +6,15 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 //Constante del Hardware
 #define MEM_SIZE 2000
 #define OS_MEM_RESERVED 300
 #define WORD_SIZE 8
 #define MAGNITUDE_LIMIT 9999999
+#define CLOCK_INTERRUPTION_INTERVAL 12
+#define MAX_STACK_SIZE 100
 
 //Codigo de Interrumpcion
 #define INT_NONE -1 //Default
@@ -57,8 +60,8 @@ typedef struct {
     int selected_track;    
     int selected_sector;   
     int ram_address;       
-    int io_direction;      
-    int status;            
+    bool io_mode; //0 Input, 1 Output
+    int status; //0 Exito, 1 Fallo           
     // Control interno 
     bool active;
     pthread_cond_t cond;
@@ -67,8 +70,11 @@ typedef struct {
 
 //Estado de Sistema
 typedef struct{
+    //Memoria Principal
     int ram[MEM_SIZE];
+    //Registros del Sistema
     CPU_REGISTERS cpu_registers;
+    //Controlador del DMA
     DMA_CONTROLLER dma_controller;
     //Para Control del BUS
     pthread_mutex_t bus_mutex;
@@ -81,28 +87,38 @@ typedef struct{
     //Interrumpion
     int pending_interrupt;
 }SYSTEM_STATE;
+
 //Instancia del Sistema
 extern SYSTEM_STATE sys;
+
 //Funciones de Proposito General
-int sign_to_int(int sm_val, int size){
-    int sign  = sm_val / pow(10, size);
-    int val = sm_val % (int)pow(10, size);
+static const int POWERS[] = {
+    1, 10, 100, 1000, 10000, 100000, 1000000, 10000000
+};
+static inline int sign_to_int(int sm_val, int size){
+    int div = POWERS[size-1];
+    int sign  = sm_val / div;
+    int val = sm_val % div;
     if(sign == 1){
-        return val*-1;
+        return -val;
     }
     return val;
 };
-int int_to_sign(int int_val, int size){
+static inline int int_to_sign(int int_val, int size){
+    int div = POWERS[size-1];
     int sign = 0;
     if(int_val < 0){
         sign = 1;
         int_val *= -1;
     }
-    if(int_val > MAGNITUDE_LIMIT){
-        //Interrumpcio por Overflow (POR HACER)
-        int_val = MAGNITUDE_LIMIT;
+    if(int_val > div - 1){
+        int_val = div - 1;
     };
-    return (sign * pow(10, size)) + int_val;
+    return (sign * div) + int_val;
 };
+
+int memory_read(int addr);
+void memory_write(int addr, int data);
+
 #endif
 
