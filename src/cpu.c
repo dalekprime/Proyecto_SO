@@ -73,7 +73,8 @@ void check_interruptions(){
 }
 
 //Main Loop del CPU
-int mainloop(){
+void* mainloop(void* arg){
+    int* prog_size = (int*) arg;
     int internal_timer = 0;
     while(1){
         //Interrumpcion de Reloj
@@ -279,6 +280,11 @@ int mainloop(){
                 sys.pending_interrupt = INT_INVALID_INSTR;
             break;
         }
+        //Logger
+        char* ins[256];
+        sprintf(ins, "Instruccion Ejecutada: %s | MAR: %s | AC: %s",
+            sys.cpu_registers.IR, sys.cpu_registers.MAR, sys.cpu_registers.AC);
+        write_in_log(ins);
         //Debug
         if (sys.debug_mode_enabled == 1) {
             printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n", 
@@ -288,9 +294,19 @@ int mainloop(){
             printf("Presione Enter para continuar...");
             getchar();
         }
+        //Evaluar fin de programa
+        if(sys.cpu_registers.PSW.operation_mode == 0){
+            *prog_size -= 1;
+            printf("%d", *prog_size);
+            if(*prog_size <= 0){
+                printf("Programa Terminado");
+                break;
+            };
+        };
         sys.time += 1;
         internal_timer += 1;
         check_interruptions();
     };
+    return NULL;
 };
 
