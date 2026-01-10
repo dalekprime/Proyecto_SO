@@ -345,7 +345,7 @@ void* mainloop(){
             //INT_IO_END
             case 94:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-                    write_in_log("Operacion I/O Terminada");
+                    write_in_log("KERNEL >> Operacion I/O Terminada");
                     //Devolver control al Usuario
                     sys.cpu_registers.PSW.pc = 99;
                 }else{
@@ -355,7 +355,7 @@ void* mainloop(){
             //INT_INVALID_INSTR
             case 95:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-                    write_in_log("Instruccion Invalida");
+                    write_in_log("KERNEL >> Instruccion Invalida");
                     //Devolver control al Usuario
                     sys.cpu_registers.PSW.pc = 99;
                 }else{
@@ -365,7 +365,7 @@ void* mainloop(){
             //INT_INVALID_ADDR
             case 96:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-                    write_in_log("Dirreccion Invalida");
+                    write_in_log("KERNEL >> Dirreccion Invalida");
                     //Devolver control al Usuario
                     sys.cpu_registers.PSW.pc = 99;
                 }else{
@@ -375,7 +375,7 @@ void* mainloop(){
             //INT_UNDERFLOW
             case 97:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-                    write_in_log("Underflow");
+                    write_in_log("KERNEL >> Underflow");
                     sys.cpu_registers.AC = -MAGNITUDE_LIMIT;
                     //Devolver control al Usuario
                     sys.cpu_registers.PSW.pc = 99;
@@ -386,7 +386,7 @@ void* mainloop(){
             //INT_OVERFLOW
             case 98:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-                    write_in_log("Overflow");
+                    write_in_log("KERNEL >> Overflow");
                     sys.cpu_registers.AC = MAGNITUDE_LIMIT;
                     //Devolver control al Usuario
                     sys.cpu_registers.PSW.pc = 99;
