@@ -23,7 +23,7 @@ int get_operand(int mode, int value){
             //Valor en Memoria con desplazamiento
             int base = sign_to_int(sys.cpu_registers.AC, 8) + value;
             if(sys.cpu_registers.PSW.operation_mode == 0){
-                value += sys.cpu_registers.RB;
+                base += sys.cpu_registers.RB;
             };
             return sign_to_int(memory_read(base), 8);
         default:
@@ -67,6 +67,10 @@ void check_interruptions(){
             //Salvaguardar Estado
             sys.cpu_registers.PSW.operation_mode = 1;
             sys.cpu_registers.PSW.interruptions_enabled = 0;
+            //Logger
+            char ins[256];
+            sprintf(ins, "Interrupcion Ejecutada: %d", sys.pending_interrupt);
+            write_in_log(ins);
             //Manejador de Interrupciones
             sys.cpu_registers.PSW.interruptions_enabled = 1;
             sys.cpu_registers.PSW.operation_mode = 0;
