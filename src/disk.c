@@ -14,7 +14,7 @@ void read_sector(int t, int c, int s, char *destiny) {
     if (t < 0 || t >= NUM_TRACKS ||
         c < 0 || c >= NUM_CYLINDERS ||
         s < 0 || s >= NUM_SECTORS) {
-        return -1;
+        return;
     }
 
     memcpy(destiny, fisic_disk.platter[t][c][s].data, TAM_SECTOR);
@@ -28,7 +28,7 @@ void write_sector(int t, int c, int s, char *origin) {
     if (t < 0 || t >= NUM_TRACKS ||
         c < 0 || c >= NUM_CYLINDERS ||
         s < 0 || s >= NUM_SECTORS) {
-        return -1;
+        return;
     }
 
     memcpy(fisic_disk.platter[t][c][s].data, origin, TAM_SECTOR);
