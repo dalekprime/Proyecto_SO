@@ -288,10 +288,10 @@ void* mainloop(){
             case 89:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
                     //Recargamos para seguir con la ultima instruccion
-                    sys.cpu_registers.PSW.pc = sys.cpu_registers.SP;
+                    sys.cpu_registers.PSW.pc = memory_read(sys.cpu_registers.SP);
                     sys.cpu_registers.SP--;
                     //Log
-                    write_in_log("Volviendo a Modo Usuario");
+                    write_in_log("KERNEL >> Volviendo a Modo Usuario");
                     //Volver a Modo Usuario
                     sys.cpu_registers.PSW.interruptions_enabled = 1;
                     sys.cpu_registers.PSW.operation_mode = 0;
@@ -302,7 +302,9 @@ void* mainloop(){
             //INT_SYSCALL_INVALID
             case 90:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("KERNEL >> Llamada Invalida al Sistema");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -310,7 +312,9 @@ void* mainloop(){
             //INT_INVALID_INT
             case 91:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("KERNEL >> Interrupcion Invalida");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -318,7 +322,9 @@ void* mainloop(){
             //INT_SYSCALL
             case 92:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("KERNEL >> Llamada al Sistema");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -326,7 +332,9 @@ void* mainloop(){
             //INT_TIMER
             case 93:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("KERNEL >> Interrupcion de Reloj");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -334,7 +342,9 @@ void* mainloop(){
             //INT_IO_END
             case 94:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("Operacion I/O Terminada");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -342,7 +352,9 @@ void* mainloop(){
             //INT_INVALID_INSTR
             case 95:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("Instruccion Invalida");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -350,7 +362,9 @@ void* mainloop(){
             //INT_INVALID_ADDR
             case 96:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("Dirreccion Invalida");
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -358,7 +372,10 @@ void* mainloop(){
             //INT_UNDERFLOW
             case 97:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("Underflow");
+                    sys.cpu_registers.AC = -MAGNITUDE_LIMIT;
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
@@ -366,7 +383,10 @@ void* mainloop(){
             //INT_OVERFLOW
             case 98:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-
+                    write_in_log("Overflow");
+                    sys.cpu_registers.AC = MAGNITUDE_LIMIT;
+                    //Devolver control al Usuario
+                    sys.cpu_registers.PSW.pc = 99;
                 }else{
                     continue;
                 };
