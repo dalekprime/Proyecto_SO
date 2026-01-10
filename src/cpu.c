@@ -386,7 +386,7 @@ void* mainloop(){
                     write_in_log("Overflow");
                     sys.cpu_registers.AC = MAGNITUDE_LIMIT;
                     //Devolver control al Usuario
-                    sys.cpu_registers.PSW.pc = 99;
+                    sys.cpu_registers.PSW.pc = 89;
                 }else{
                     continue;
                 };
