@@ -18,7 +18,7 @@ void init(){
     sys.cpu_registers.PSW.interruptions_enabled = 1;
     sys.cpu_registers.PSW.pc = 0;
     //Inciar Parametros    
-    sys.debug_mode_enabled = 1;
+    sys.debug_mode_enabled = 0;
     sys.time = 0;
     sys.pending_interrupt = INT_NONE;
     //Iniciar Semaforos
@@ -43,12 +43,11 @@ void init(){
     sys.ram[108] = 98000000;
 };
 
-int main(){
-
-    init();
-    init_disk();
-
-    int prog_size = load_program("data/program.asm", sys.cpu_registers.RB);
+void startProgram(char* dir){
+    char real_dir[256];
+    printf("Ingrese Nombre del Programa\n");
+    sprintf(real_dir, "data/%s", dir);
+    int prog_size = load_program(real_dir, sys.cpu_registers.RB);
     pthread_t cpu;
     if (prog_size > 0) {
         int code_end = sys.cpu_registers.RB + prog_size;
@@ -57,7 +56,43 @@ int main(){
         sys.cpu_registers.RL = code_end + MAX_STACK_SIZE;
         pthread_create(&cpu, NULL, (void*)mainloop, NULL);
         pthread_join(cpu, NULL);
-    }
+    };
+};
+
+//Menu Funcional
+void menu(){
+    int op = 0;
+    char dir[256];
+    while(op != 3){
+        printf("---Menu---\n1) Iniciar en Modo Normal\n2) Iniciar en modo Debug\n3)Apagar\n");
+        scanf("%d", &op);
+        switch (op){
+        case 1:
+            scanf("%s", dir);
+            startProgram(dir);
+            sys.debug_mode_enabled = 0;
+        break;
+        case 2:
+            scanf("%s", dir);
+            startProgram(dir);
+            sys.debug_mode_enabled = 1;
+        break;
+        case 3:
+            printf("Cerrrando...\n");
+        break;
+        default:
+            printf("Opcion Invalida\n");
+        break;
+        }
+    };
+
+};
+int main(){
+
+    init();
+    init_disk();
+    menu();
+    
 
     return 0;
 }
