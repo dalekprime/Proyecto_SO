@@ -9,7 +9,7 @@ void init_disk(void) {
 }
 
 // Lectura: Hardware -> Ram (destiny)
-int read_sector(int t, int c, int s, char *destiny) {
+void read_sector(int t, int c, int s, char *destiny) {
     //validacion para no salirse de los limites
     if (t < 0 || t >= NUM_TRACKS ||
         c < 0 || c >= NUM_CYLINDERS ||
@@ -19,11 +19,11 @@ int read_sector(int t, int c, int s, char *destiny) {
 
     memcpy(destiny, fisic_disk.platter[t][c][s].data, TAM_SECTOR);
 
-    return 0;
+    return;
 }
 
 // Escritura: Ram (origin) -> Hardware
-int write_sector(int t, int c, int s, char *origin) {
+void write_sector(int t, int c, int s, char *origin) {
 
     if (t < 0 || t >= NUM_TRACKS ||
         c < 0 || c >= NUM_CYLINDERS ||
@@ -33,5 +33,5 @@ int write_sector(int t, int c, int s, char *origin) {
 
     memcpy(fisic_disk.platter[t][c][s].data, origin, TAM_SECTOR);
 
-    return 0;
+    return;
 }

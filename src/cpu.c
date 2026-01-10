@@ -64,16 +64,19 @@ int get_addr(int mode, int value){
 void check_interruptions(){
     if(sys.pending_interrupt != INT_NONE && 
         sys.cpu_registers.PSW.interruptions_enabled){
-            //Salvaguardar Estado
+            //Cambia a modo Kernel
             sys.cpu_registers.PSW.operation_mode = 1;
             sys.cpu_registers.PSW.interruptions_enabled = 0;
+            //Salvaguardar Estado
+            sys.cpu_registers.SP++;
+            memory_write(sys.cpu_registers.SP, sys.cpu_registers.PSW.pc);
+            write_in_log("Entrando en modo Kernel...");
             //Logger
             char ins[256];
             sprintf(ins, "Interrupcion Ejecutada: %d", sys.pending_interrupt);
             write_in_log(ins);
             //Manejador de Interrupciones
-            sys.cpu_registers.PSW.interruptions_enabled = 1;
-            sys.cpu_registers.PSW.operation_mode = 0;
+            sys.cpu_registers.PSW.pc = 100 + sys.pending_interrupt;
             sys.pending_interrupt = INT_NONE;
     };
 }
@@ -280,6 +283,93 @@ void* mainloop(){
             //sdmaon
             case 33:
                 //Iniciar DMA
+            break;
+            //Devuelve control al Usuario
+            case 89:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+                    //Recargamos para seguir con la ultima instruccion
+                    sys.cpu_registers.PSW.pc = sys.cpu_registers.SP;
+                    sys.cpu_registers.SP--;
+                    //Log
+                    write_in_log("Volviendo a Modo Usuario");
+                    //Volver a Modo Usuario
+                    sys.cpu_registers.PSW.interruptions_enabled = 1;
+                    sys.cpu_registers.PSW.operation_mode = 0;
+                }else{
+                    continue;
+                };
+            break;
+            //INT_SYSCALL_INVALID
+            case 90:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_INVALID_INT
+            case 91:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_SYSCALL
+            case 92:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_TIMER
+            case 93:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_IO_END
+            case 94:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_INVALID_INSTR
+            case 95:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_INVALID_ADDR
+            case 96:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_UNDERFLOW
+            case 97:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
+            break;
+            //INT_OVERFLOW
+            case 98:
+                if(sys.cpu_registers.PSW.operation_mode == 1){
+
+                }else{
+                    continue;
+                };
             break;
             //halt
             case 99:

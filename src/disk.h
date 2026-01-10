@@ -22,8 +22,8 @@ typedef struct {
 void init_disk(void);
 
 //t = track, c = cylinder, s = sector
-int read_sector(int t, int c, int s, char *destiny);
+void read_sector(int t, int c, int s, char *destiny);
 
-int write_sector(int t, int c, int s, char *origin);
+void write_sector(int t, int c, int s, char *origin);
 
 #endif

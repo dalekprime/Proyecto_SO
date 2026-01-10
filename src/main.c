@@ -30,11 +30,23 @@ void init(){
     sys.dma_controller.selected_track = 0;
     sys.dma_controller.ram_address = 0;
     sys.dma_controller.status= 0;
+    //Carga Codigo de Interrumpciones
+    sys.ram[99] = 89000000;
+    sys.ram[100] = 90000000;
+    sys.ram[101] = 91000000;
+    sys.ram[102] = 92000000;
+    sys.ram[103] = 93000000;
+    sys.ram[104] = 94000000;
+    sys.ram[105] = 95000000;
+    sys.ram[106] = 96000000;
+    sys.ram[107] = 97000000;
+    sys.ram[108] = 98000000;
 };
 
 int main(){
 
     init();
+    init_disk();
 
     int prog_size = load_program("data/program.asm", sys.cpu_registers.RB);
     pthread_t cpu;
