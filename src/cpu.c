@@ -62,7 +62,7 @@ int get_addr(int mode, int value){
 
 //Manejador de Interrupciones
 void check_interruptions(){
-    if(sys.pending_interrupt != INT_NONE && 
+    if(sys.pending_interrupt != INT_NONE &&
         sys.cpu_registers.PSW.interruptions_enabled){
             //Cambia a modo Kernel
             sys.cpu_registers.PSW.operation_mode = 1;
@@ -286,6 +286,10 @@ void* mainloop(){
             //sdmaon
             case 33:
                 //Iniciar DMA
+                pthread_mutex_lock(&sys.dma_controller.mutex);
+                sys.dma_controller.active = true;
+                pthread_cond_signal(&sys.dma_controller.cond);
+                pthread_mutex_unlock(&sys.dma_controller.mutex);
             break;
             //Devuelve control al Usuario
             case 89:
@@ -410,9 +414,9 @@ void* mainloop(){
         write_in_log(ins);
         //Debug
         if (sys.debug_mode_enabled == 1) {
-            printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n", 
-                   sys.cpu_registers.MAR, 
-                   sys.cpu_registers.IR, 
+            printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n",
+                   sys.cpu_registers.MAR,
+                   sys.cpu_registers.IR,
                    sys.cpu_registers.AC);
             printf("Presione Enter para continuar...");
             getchar();

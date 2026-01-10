@@ -17,13 +17,10 @@ void init(){
     sys.cpu_registers.PSW.operation_mode = 0;
     sys.cpu_registers.PSW.interruptions_enabled = 1;
     sys.cpu_registers.PSW.pc = 0;
-    //Inciar Parametros    
+    //Inciar Parametros
     sys.debug_mode_enabled = 0;
     sys.time = 0;
     sys.pending_interrupt = INT_NONE;
-    //Iniciar Semaforos
-    pthread_mutex_init(&sys.bus_mutex, NULL);
-    pthread_mutex_init(&sys.log_mutex, NULL);
     //Inciar DMA
     sys.dma_controller.selected_cylinder = 0;
     sys.dma_controller.selected_sector = 0;
@@ -67,7 +64,14 @@ void menu(){
     int op = 0;
     while(op != 3){
         printf("---Menu---\n1) Iniciar en Modo Normal\n2) Iniciar en modo Debug\n3)Apagar\n");
-        scanf("%d", &op);
+        if (scanf("%d", &op) != 1) {
+            // Limpiar buffer o salir en EOF
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
+            if (c == EOF) break;
+            printf("Entrada invalida\n");
+            continue;
+        }
         switch (op){
         case 1:
             sys.debug_mode_enabled = 0;
@@ -89,10 +93,15 @@ void menu(){
 };
 int main(){
 
+    //Iniciar Semaforos (Solo una vez al arranque)
+    pthread_mutex_init(&sys.bus_mutex, NULL);
+    pthread_mutex_init(&sys.log_mutex, NULL);
+
     init();
     init_disk();
+    init_dma();
     menu();
-    
+
 
     return 0;
 }
