@@ -47,6 +47,7 @@ int load_program(const char *filename, int base_address) {
             instructions_loaded++;
         }
     }
+    memory_write(current_addr, 99000000);
     fclose(file);
     sys.cpu_registers.PSW.operation_mode = prev_mode;
     return instructions_loaded;

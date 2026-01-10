@@ -79,9 +79,9 @@ void check_interruptions(){
 }
 
 //Main Loop del CPU
-void* mainloop(void* arg){
-    int* prog_size = (int*) arg;
+void* mainloop(){
     int internal_timer = 0;
+    bool end = 0;
     while(1){
         //Interrumpcion de Reloj
         if(internal_timer >= CLOCK_INTERRUPTION_INTERVAL){
@@ -281,6 +281,10 @@ void* mainloop(void* arg){
             case 33:
                 //Iniciar DMA
             break;
+            //halt
+            case 99:
+                end = 1;
+            break;
             //Instruccion Invalida
             default:
                 sys.pending_interrupt = INT_INVALID_INSTR;
@@ -300,20 +304,16 @@ void* mainloop(void* arg){
             printf("Presione Enter para continuar...");
             getchar();
         }
-        //Evaluar fin de programa
-        if(sys.cpu_registers.PSW.operation_mode == 0){
-            *prog_size -= 1;
-            printf("%d", *prog_size);
-            if(*prog_size <= 0){
-                char ins[256];
-                sprintf(ins, "Programa terminado en %d...", sys.time);
-                write_in_log(ins);
-                break;
-            };
-        };
         sys.time += 1;
         internal_timer += 1;
         check_interruptions();
+        //Terminar
+        if(end == 1){
+            char ins[256];
+            sprintf(ins, "Programa terminado en %d...", sys.time);
+            write_in_log(ins);
+            break;
+        };
     };
     return NULL;
 };
