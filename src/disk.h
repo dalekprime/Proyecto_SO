@@ -1,7 +1,8 @@
 #ifndef DISK_H
 #define DISK_H
 
-#include <pthread.h>
+#include "system.h"
+
 #define NUM_TRACKS 10
 #define NUM_CYLINDERS 10
 #define NUM_SECTORS 100

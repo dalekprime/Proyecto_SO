@@ -120,6 +120,7 @@ static inline int int_to_sign(int int_val, int size){
 int memory_read(int addr);
 void memory_write(int addr, int data);
 void write_in_log(const char *event);
+check_interruptions();
 
 #endif
 

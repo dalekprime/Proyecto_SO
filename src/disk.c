@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <string.h>
 #include "disk.h"
 
 // Variable privada del archivo (Hardware encapsulado)
@@ -8,7 +6,6 @@ static Disk fisic_disk;
 // Inicializa el disco llenándolo de ceros
 void init_disk(void) {
     memset(&fisic_disk, 0, sizeof(Disk));
-    printf("[HARDWARE] Disco inicializado correctamente.\n");
 }
 
 // Lectura: Hardware -> Ram (destiny)
@@ -33,7 +30,6 @@ int write_sector(int t, int c, int s, char *origin) {
         s < 0 || s >= NUM_SECTORS) {
         return -1;
     }
-
 
     memcpy(fisic_disk.platter[t][c][s].data, origin, TAM_SECTOR);
 
