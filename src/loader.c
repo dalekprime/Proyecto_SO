@@ -31,7 +31,7 @@ int load_program(const char *filename, int base_address) {
         //Procesar Directivas
         if (line[0] == '.') {
             if (strncmp(line, ".NombreProg", 11) == 0) {
-
+                write_in_log(line);
             }
             continue; 
         }

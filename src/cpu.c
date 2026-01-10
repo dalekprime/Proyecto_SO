@@ -68,6 +68,8 @@ void check_interruptions(){
             sys.cpu_registers.PSW.operation_mode = 1;
             sys.cpu_registers.PSW.interruptions_enabled = 0;
             //Manejador de Interrupciones
+            sys.cpu_registers.PSW.interruptions_enabled = 1;
+            sys.cpu_registers.PSW.operation_mode = 0;
             sys.pending_interrupt = INT_NONE;
     };
 }
@@ -281,8 +283,8 @@ void* mainloop(void* arg){
             break;
         }
         //Logger
-        char* ins[256];
-        sprintf(ins, "Instruccion Ejecutada: %s | MAR: %s | AC: %s",
+        char ins[256];
+        sprintf(ins, "Instruccion Ejecutada: %d | MAR: %d | AC: %d",
             sys.cpu_registers.IR, sys.cpu_registers.MAR, sys.cpu_registers.AC);
         write_in_log(ins);
         //Debug
@@ -299,7 +301,9 @@ void* mainloop(void* arg){
             *prog_size -= 1;
             printf("%d", *prog_size);
             if(*prog_size <= 0){
-                printf("Programa Terminado");
+                char ins[256];
+                sprintf(ins, "Programa terminado en %d...", sys.time);
+                write_in_log(ins);
                 break;
             };
         };

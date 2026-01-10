@@ -2,9 +2,15 @@
 
 // Función genérica para registrar cualquier evento
 void write_in_log(const char *event) {
+    //Toma control del Semaforo
+    pthread_mutex_lock(&sys.log_mutex);
+
     FILE *archive = fopen("resume.log", "a");
     if (archive == NULL) return;
-    fprintf(archive, "Instruccion Ejecutada: %s\n", event);
+    fprintf(archive, "%s\n", event);
     fclose(archive);
+
+    //Libera el Semaforo
+    pthread_mutex_unlock(&sys.log_mutex);
 };
 
