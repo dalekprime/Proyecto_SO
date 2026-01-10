@@ -43,9 +43,11 @@ void init(){
     sys.ram[108] = 98000000;
 };
 
-void startProgram(char* dir){
+void startProgram(){
+    char dir[128];
     char real_dir[256];
     printf("Ingrese Nombre del Programa\n");
+    scanf("%s", dir);
     sprintf(real_dir, "data/%s", dir);
     int prog_size = load_program(real_dir, sys.cpu_registers.RB);
     pthread_t cpu;
@@ -56,26 +58,24 @@ void startProgram(char* dir){
         sys.cpu_registers.RL = code_end + MAX_STACK_SIZE;
         pthread_create(&cpu, NULL, (void*)mainloop, NULL);
         pthread_join(cpu, NULL);
+        init();
     };
 };
 
 //Menu Funcional
 void menu(){
     int op = 0;
-    char dir[256];
     while(op != 3){
         printf("---Menu---\n1) Iniciar en Modo Normal\n2) Iniciar en modo Debug\n3)Apagar\n");
         scanf("%d", &op);
         switch (op){
         case 1:
-            scanf("%s", dir);
-            startProgram(dir);
             sys.debug_mode_enabled = 0;
+            startProgram();
         break;
         case 2:
-            scanf("%s", dir);
-            startProgram(dir);
             sys.debug_mode_enabled = 1;
+            startProgram();
         break;
         case 3:
             printf("Cerrrando...\n");
