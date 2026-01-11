@@ -9,6 +9,7 @@ void* dma_loop() {
             if(sys.dma_controller.shutdown == 1){
                 break;
             };
+            usleep(1000);
         };
         if(sys.dma_controller.shutdown == 1){
                 break;

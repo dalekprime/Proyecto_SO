@@ -1,7 +1,7 @@
 #include "debugger.h"
 
 void debug(){
-    printf("\nDEBUG >> MAR: %d | IR: %d| AC: %d\n",
+    printf("\nDEBUG >> Instruccion Actual MAR: %d | IR: %d| AC: %d\n",
         sys.cpu_registers.MAR,
         sys.cpu_registers.IR,
         sys.cpu_registers.AC);
@@ -38,8 +38,7 @@ void debug(){
                 printf("Debug >> PC: %d\n", sys.cpu_registers.PSW.pc);
             break;
             case 10:
-                printf("Presione Enter para continuar...");
-                getchar();
+                printf("Presione Enter para continuar...\n");
             break;
             default:
                 printf("Opcion Invalida\n");
