@@ -347,7 +347,7 @@ void* mainloop(){
             case 94:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
                     char mes[256];
-                    sprintf(mes, "KERNEL >> Operacion I/O Terminada %s", sys.dma_controller.status);
+                    sprintf(mes, "KERNEL >> Operacion I/O Terminada %d", sys.dma_controller.status);
                     write_in_log(mes);
                     sys.dma_controller.active = false;
                     //Devolver control al Usuario
