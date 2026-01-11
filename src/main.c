@@ -69,8 +69,8 @@ void startProgram(){
 //Menu Funcional
 void menu(){
     int op = 0;
-    while(op != 3){
-        printf("---Menu---\n1) Iniciar en Modo Normal\n2) Iniciar en modo Debug\n3)Apagar\n");
+    while(op != 4){
+        printf("---Menu---\n1)Iniciar en Modo Normal\n2)Iniciar en modo Debug\n3)Limpiar Log\n4)Apagar\n");
         if (scanf("%d", &op) != 1) {
             // Limpiar buffer o salir en EOF
             int c;
@@ -89,6 +89,10 @@ void menu(){
             startProgram();
         break;
         case 3:
+            clean_log();
+            printf("log Eliminado...\n");
+        break;
+        case 4:
             printf("Cerrrando...\n");
         break;
         default:
