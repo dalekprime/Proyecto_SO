@@ -63,7 +63,6 @@ void startProgram(){
         pthread_create(&cpu, NULL, (void*)mainloop, NULL);
         pthread_join(cpu, NULL);
         init();
-        init_disk();
     };
 };
 
