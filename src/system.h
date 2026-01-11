@@ -55,6 +55,7 @@ typedef struct{
 
 //Estado del DMA
 typedef struct {
+    pthread_t dma_id;
     // Registros accesibles por instrucciones 
     int selected_cylinder; 
     int selected_track;    
@@ -64,6 +65,8 @@ typedef struct {
     int status; //0 Exito, 1 Fallo           
     // Control interno 
     bool active;
+    //Fin de Programa
+    bool shutdown;
 } DMA_CONTROLLER;
 
 //Estado de Sistema

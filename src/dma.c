@@ -6,8 +6,12 @@ void* dma_loop() {
     while (1) {
         //Espera a iniciar
         while (!sys.dma_controller.active) {
-            continue;
+            if(sys.dma_controller.shutdown == 1){
+                break;
+            };
         };
+        
+        write_in_log("Iniciando Operacion I/O..");
         //Bloqueamos el bus para que la CPU no toque la RAM mientras transferimos
         pthread_mutex_lock(&sys.bus_mutex);
         //Copiar parámetros a variables locales
@@ -28,6 +32,7 @@ void* dma_loop() {
             } else {
                 result_status = 1;
             }
+            write_in_log("Operacion DISK -> RAM..");
         } else { 
             //MODO ESCRITURA: RAM -> DISCO
             //Leer de RAM
@@ -38,6 +43,7 @@ void* dma_loop() {
             } else {
                 result_status = 1;
             }
+            write_in_log("Operacion RAM -> DISk..");
             //Escribir en el Disco
             write_sector(track, cyl, sec, (char*)buffer.data);
         }
@@ -48,6 +54,9 @@ void* dma_loop() {
         sys.pending_interrupt = INT_IO_END;
         //LIBERAR EL BUS
         pthread_mutex_unlock(&sys.bus_mutex);
+        if(sys.dma_controller.shutdown == 1){
+            break;
+        };
     }
     return NULL;
 }

@@ -1,13 +1,7 @@
 _start 1
-.NumeroPalabras 7
-.NombreProg DMATest
-28100000
-29100000
-30100000
-32100050
-31100000
-33000000
+.NumeroPalabras 5
+.NombreProg CrashTest
+04100010
+03100000
+13000000
 99000000
-     
-     
-     

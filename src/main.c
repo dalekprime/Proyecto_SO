@@ -28,6 +28,7 @@ void init(){
     sys.dma_controller.ram_address = 0;
     sys.dma_controller.status= 0;
     sys.dma_controller.active = false;
+    sys.dma_controller.shutdown = false;
     //Carga Codigo de Interrumpciones
     sys.ram[99] = 89000000;
     sys.ram[100] = 90000000;
@@ -59,8 +60,8 @@ void startProgram(){
         sys.cpu_registers.RL = code_end + MAX_STACK_SIZE;
         pthread_create(&cpu, NULL, (void*)mainloop, NULL);
         pthread_create(&dma, NULL, (void*)dma_loop, NULL);
+        sys.dma_controller.dma_id = dma;
         pthread_join(cpu, NULL);
-        pthread_join(dma, NULL);
         init();
         init_disk();
     };

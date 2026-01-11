@@ -400,7 +400,10 @@ void* mainloop(){
             break;
             //halt
             case 99:
-                end = 1;
+                    pthread_join(sys.dma_controller.dma_id, NULL);
+                    check_interruptions();
+                    end = 1;
+                    sys.dma_controller.shutdown = true;
             break;
             //Instruccion Invalida
             default:

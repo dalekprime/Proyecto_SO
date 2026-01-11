@@ -1,11 +1,13 @@
 _start 1
-.NumeroPalabras 6
-.NombreProg LoopTest
-04100000
-25000000
-04100003
-01100001
-10000003
+.NumeroPalabras 7
+.NombreProg DMATest
+28100000
+29100000
+30100000
+32100050
+31100000
+33000000
 99000000
+     
      
      
