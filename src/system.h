@@ -64,8 +64,6 @@ typedef struct {
     int status; //0 Exito, 1 Fallo           
     // Control interno 
     bool active;
-    pthread_cond_t cond;
-    pthread_mutex_t mutex;
 } DMA_CONTROLLER;
 
 //Estado de Sistema

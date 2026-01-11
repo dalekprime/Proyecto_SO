@@ -27,6 +27,7 @@ void init(){
     sys.dma_controller.selected_track = 0;
     sys.dma_controller.ram_address = 0;
     sys.dma_controller.status= 0;
+    sys.dma_controller.active = false;
     //Carga Codigo de Interrumpciones
     sys.ram[99] = 89000000;
     sys.ram[100] = 90000000;
@@ -38,6 +39,9 @@ void init(){
     sys.ram[106] = 96000000;
     sys.ram[107] = 97000000;
     sys.ram[108] = 98000000;
+    //Iniciar Semaforos (Solo una vez al arranque)
+    pthread_mutex_init(&sys.bus_mutex, NULL);
+    pthread_mutex_init(&sys.log_mutex, NULL);
 };
 
 void startProgram(){
@@ -47,15 +51,18 @@ void startProgram(){
     scanf("%s", dir);
     sprintf(real_dir, "data/%s", dir);
     int prog_size = load_program(real_dir, sys.cpu_registers.RB);
-    pthread_t cpu;
+    pthread_t cpu, dma;
     if (prog_size > 0) {
         int code_end = sys.cpu_registers.RB + prog_size;
         sys.cpu_registers.SP = code_end;
         sys.cpu_registers.RX = sys.cpu_registers.SP;
         sys.cpu_registers.RL = code_end + MAX_STACK_SIZE;
         pthread_create(&cpu, NULL, (void*)mainloop, NULL);
+        pthread_create(&dma, NULL, (void*)dma_loop, NULL);
         pthread_join(cpu, NULL);
+        pthread_join(dma, NULL);
         init();
+        init_disk();
     };
 };
 
@@ -92,16 +99,8 @@ void menu(){
 
 };
 int main(){
-
-    //Iniciar Semaforos (Solo una vez al arranque)
-    pthread_mutex_init(&sys.bus_mutex, NULL);
-    pthread_mutex_init(&sys.log_mutex, NULL);
-
     init();
     init_disk();
-    init_dma();
     menu();
-
-
     return 0;
-}
+};

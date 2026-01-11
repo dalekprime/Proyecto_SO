@@ -286,10 +286,7 @@ void* mainloop(){
             //sdmaon
             case 33:
                 //Iniciar DMA
-                pthread_mutex_lock(&sys.dma_controller.mutex);
                 sys.dma_controller.active = true;
-                pthread_cond_signal(&sys.dma_controller.cond);
-                pthread_mutex_unlock(&sys.dma_controller.mutex);
             break;
             //Devuelve control al Usuario
             case 89:
@@ -349,7 +346,10 @@ void* mainloop(){
             //INT_IO_END
             case 94:
                 if(sys.cpu_registers.PSW.operation_mode == 1){
-                    write_in_log("KERNEL >> Operacion I/O Terminada");
+                    char mes[256];
+                    sprintf(mes, "KERNEL >> Operacion I/O Terminada %s", sys.dma_controller.status);
+                    write_in_log(mes);
+                    sys.dma_controller.active = false;
                     //Devolver control al Usuario
                     sys.cpu_registers.PSW.pc = 99;
                 }else{
