@@ -58,9 +58,9 @@ void startProgram(){
         sys.cpu_registers.SP = code_end;
         sys.cpu_registers.RX = sys.cpu_registers.SP;
         sys.cpu_registers.RL = code_end + MAX_STACK_SIZE;
-        pthread_create(&cpu, NULL, (void*)mainloop, NULL);
         pthread_create(&dma, NULL, (void*)dma_loop, NULL);
         sys.dma_controller.dma_id = dma;
+        pthread_create(&cpu, NULL, (void*)mainloop, NULL);
         pthread_join(cpu, NULL);
         init();
         init_disk();

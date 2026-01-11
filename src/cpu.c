@@ -162,7 +162,12 @@ void* mainloop(){
                 val_ac = sign_to_int(sys.cpu_registers.AC, 8);
                 val_op = sign_to_int(memory_read(sys.cpu_registers.SP), 8);
                 if(val_ac == val_op){
-                    sys.cpu_registers.PSW.pc = get_addr(addr_mode, operand);
+                    int target = get_addr(addr_mode, operand);
+                    if(sys.cpu_registers.PSW.operation_mode == 0){
+                        //Para evitar doble Relocalizacion
+                        target -= sys.cpu_registers.RB;
+                    };
+                    sys.cpu_registers.PSW.pc = target;
                 };
             break;
             //jmpne
@@ -170,7 +175,12 @@ void* mainloop(){
                 val_ac = sign_to_int(sys.cpu_registers.AC, 8);
                 val_op = sign_to_int(memory_read(sys.cpu_registers.SP), 8);
                 if(val_ac != val_op){
-                    sys.cpu_registers.PSW.pc = get_addr(addr_mode, operand);
+                    int target = get_addr(addr_mode, operand);
+                    if(sys.cpu_registers.PSW.operation_mode == 0){
+                        //Para evitar doble Relocalizacion
+                        target -= sys.cpu_registers.RB;
+                    };
+                    sys.cpu_registers.PSW.pc = target;
                 };
             break;
             //jmplt
@@ -178,7 +188,12 @@ void* mainloop(){
                 val_ac = sign_to_int(sys.cpu_registers.AC, 8);
                 val_op = sign_to_int(memory_read(sys.cpu_registers.SP), 8);
                 if(val_ac < val_op){
-                    sys.cpu_registers.PSW.pc = get_addr(addr_mode, operand);
+                    int target = get_addr(addr_mode, operand);
+                    if(sys.cpu_registers.PSW.operation_mode == 0){
+                        //Para evitar doble Relocalizacion
+                        target -= sys.cpu_registers.RB;
+                    };
+                    sys.cpu_registers.PSW.pc = target;
                 };
             break;
             //jmplgt
@@ -186,7 +201,12 @@ void* mainloop(){
                 val_ac = sign_to_int(sys.cpu_registers.AC, 8);
                 val_op = sign_to_int(memory_read(sys.cpu_registers.SP), 8);
                 if(val_ac > val_op){
-                    sys.cpu_registers.PSW.pc = get_addr(addr_mode, operand);
+                    int target = get_addr(addr_mode, operand);
+                    if(sys.cpu_registers.PSW.operation_mode == 0){
+                        //Para evitar doble Relocalizacion
+                        target -= sys.cpu_registers.RB;
+                    };
+                    sys.cpu_registers.PSW.pc = target;
                 };
             break;
             //svc
@@ -256,7 +276,12 @@ void* mainloop(){
             break;
             //j
             case 27:
-                sys.cpu_registers.PSW.pc = get_addr(addr_mode, operand);
+                int target = get_addr(addr_mode, operand);
+                if(sys.cpu_registers.PSW.operation_mode == 0){
+                    //Para evitar doble Relocalizacion
+                    target -= sys.cpu_registers.RB;
+                };
+                sys.cpu_registers.PSW.pc = target;
             break;
             //sdmap
             case 28:
@@ -295,7 +320,7 @@ void* mainloop(){
                     sys.cpu_registers.PSW.pc = memory_read(sys.cpu_registers.SP);
                     sys.cpu_registers.SP--;
                     //Log
-                    write_in_log("KERNEL >> Volviendo a Modo Usuario");
+                    write_in_log("Volviendo a Modo Usuario...");
                     //Volver a Modo Usuario
                     sys.cpu_registers.PSW.interruptions_enabled = 1;
                     sys.cpu_registers.PSW.operation_mode = 0;
@@ -400,10 +425,11 @@ void* mainloop(){
             break;
             //halt
             case 99:
-                    pthread_join(sys.dma_controller.dma_id, NULL);
-                    check_interruptions();
-                    end = 1;
-                    sys.dma_controller.shutdown = true;
+                while (sys.dma_controller.active){};
+                sys.dma_controller.shutdown = true;
+                check_interruptions();
+                pthread_join(sys.dma_controller.dma_id, NULL);
+                end = 1;
             break;
             //Instruccion Invalida
             default:
@@ -411,10 +437,12 @@ void* mainloop(){
             break;
         }
         //Logger
-        char ins[256];
-        sprintf(ins, "Instruccion Ejecutada: %d | MAR: %d | AC: %d",
-            sys.cpu_registers.IR, sys.cpu_registers.MAR, sys.cpu_registers.AC);
-        write_in_log(ins);
+        if(sys.cpu_registers.IR < 89000000 || sys.cpu_registers.IR == 99000000 ){
+            char ins[256];
+            sprintf(ins, "Instruccion Ejecutada: %d | MAR: %d | AC: %d",
+                sys.cpu_registers.IR, sys.cpu_registers.MAR, sys.cpu_registers.AC);
+            write_in_log(ins);
+        };
         //Debug
         if (sys.debug_mode_enabled == 1) {
             printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n",
@@ -430,7 +458,7 @@ void* mainloop(){
         //Terminar
         if(end == 1){
             char ins[256];
-            sprintf(ins, "Programa terminado en %d...", sys.time);
+            sprintf(ins, "Programa terminado en %d...\n", sys.time);
             write_in_log(ins);
             break;
         };

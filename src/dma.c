@@ -10,7 +10,9 @@ void* dma_loop() {
                 break;
             };
         };
-        
+        if(sys.dma_controller.shutdown == 1){
+                break;
+            };
         write_in_log("Iniciando Operacion I/O..");
         //Bloqueamos el bus para que la CPU no toque la RAM mientras transferimos
         pthread_mutex_lock(&sys.bus_mutex);
