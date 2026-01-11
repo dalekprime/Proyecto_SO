@@ -445,12 +445,7 @@ void* mainloop(){
         };
         //Debug
         if (sys.debug_mode_enabled == 1) {
-            printf("\nDEBUG > MAR: %d | IR: %d| AC: %d\n",
-                   sys.cpu_registers.MAR,
-                   sys.cpu_registers.IR,
-                   sys.cpu_registers.AC);
-            printf("Presione Enter para continuar...");
-            getchar();
+            debug();
         }
         sys.time += 1;
         internal_timer += 1;
