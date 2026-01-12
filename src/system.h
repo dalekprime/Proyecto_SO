@@ -84,6 +84,8 @@ typedef struct{
     pthread_mutex_t log_mutex;
     //Reloj
     int time;
+    //Tiempo Entre Interrupciones de Reloj
+    int time_interruption;
     //Modo del Sistema
     int debug_mode_enabled; //0 Disable, 1 Enable
     //Interrumpion

@@ -87,7 +87,7 @@ void* mainloop(){
     bool end = 0;
     while(1){
         //Interrumpcion de Reloj
-        if(internal_timer >= CLOCK_INTERRUPTION_INTERVAL){
+        if(internal_timer >= sys.time_interruption){
             sys.pending_interrupt = INT_TIMER;
             internal_timer = 0;
         };
@@ -229,7 +229,7 @@ void* mainloop(){
             break;
             //tti
             case 17:
-                sys.time = operand;
+                sys.time_interruption = operand;
                 internal_timer = 0;
             break;
             //chmod

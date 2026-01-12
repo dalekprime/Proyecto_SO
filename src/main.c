@@ -105,6 +105,8 @@ void menu(){
 int main(){
     init();
     init_disk();
+    //Definimos el tiempo inical entre interrupciones
+    sys.time_interruption = 12;
     menu();
     return 0;
 };
